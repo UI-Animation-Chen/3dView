@@ -7,7 +7,7 @@ import android.view.MotionEvent;
  * two fingers: move(one or two), rotate, scale
  */
 
-public class TwoFingersGestureDetecter {
+public class TwoFingersGestureDetector {
 
     private boolean moreThan2Fingers = false;
 
@@ -20,7 +20,8 @@ public class TwoFingersGestureDetecter {
     private static final float RADIAN_TO_DEGREE = (float) (180.0 / Math.PI);
     private float oldTanDeg = 0f;
 
-    private float old2FingersDistance = 0f;
+    private float oldScaledX = 0f;
+    private float oldScaledY = 0f;
 
     private long oldTimestamp = 0, currDeltaMilliseconds = 0;
 
@@ -41,7 +42,7 @@ public class TwoFingersGestureDetecter {
                 oldY = event.getY(0);
                 oldTimestamp = event.getDownTime();
                 if (twoFingersGestureListenter != null) {
-                    twoFingersGestureListenter.down(oldX, oldY, oldTimestamp);
+                    twoFingersGestureListenter.onDown(oldX, oldY, oldTimestamp);
                 }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -51,7 +52,8 @@ public class TwoFingersGestureDetecter {
 
                 // 第二个触点一出现就清空。当然上次up清理也行。
                 oldTanDeg = 0f;
-                old2FingersDistance = 0f;
+                oldScaledX = 0f;
+                oldScaledY = 0f;
 
                 oldX = (event.getX(0) + event.getX(1)) / 2f;
                 oldY = (event.getY(0) + event.getY(1)) / 2f;
@@ -72,11 +74,13 @@ public class TwoFingersGestureDetecter {
                     // handle rotate
                     currDeltaRotatedDeg = getRotatedDegBetween2Events(event);
                     // handle scale
-                    currDeltaScaledDistance = getScaledDistanceBetween2Events(event);
+                    float deltaScaledX = getScaledDeltaXBetween2Events(event);
+                    float deltaScaledY = getScaledDeltaYBetween2Events(event);
+                    currDeltaScaledDistance = (float) Math.sqrt((deltaScaledX * deltaScaledX) + (deltaScaledY * deltaScaledY));
 
                     if (this.twoFingersGestureListenter != null) {
-                        twoFingersGestureListenter.scaled(currDeltaScaledDistance, currDeltaMilliseconds);
-                        twoFingersGestureListenter.rotated(currDeltaRotatedDeg, currDeltaMilliseconds);
+                        twoFingersGestureListenter.onScaled(deltaScaledX, deltaScaledY, currDeltaScaledDistance, currDeltaMilliseconds);
+                        twoFingersGestureListenter.onRotated(currDeltaRotatedDeg, currDeltaMilliseconds);
                     }
 
                     // handle move
@@ -93,7 +97,7 @@ public class TwoFingersGestureDetecter {
                 oldY = newY;
 
                 if (this.twoFingersGestureListenter != null) {
-                    twoFingersGestureListenter.moved(currDeltaMovedX, currDeltaMovedY, currDeltaMilliseconds);
+                    twoFingersGestureListenter.onMoved(currDeltaMovedX, currDeltaMovedY, currDeltaMilliseconds);
                 }
                 break;
             case MotionEvent.ACTION_POINTER_UP:
@@ -116,7 +120,7 @@ public class TwoFingersGestureDetecter {
                 }
 
                 if (twoFingersGestureListenter != null) {
-                    twoFingersGestureListenter.up(
+                    twoFingersGestureListenter.onUp(
                             oldX, oldY, oldTimestamp, currDeltaMilliseconds,
                             currDeltaMilliseconds == 0f ? 0f : 1000 * currDeltaMovedX / currDeltaMilliseconds,
                             currDeltaMilliseconds == 0f ? 0f : 1000 * currDeltaMovedY / currDeltaMilliseconds,
@@ -145,30 +149,41 @@ public class TwoFingersGestureDetecter {
         }
     }
 
-    private float getScaledDistanceBetween2Events(MotionEvent event) {
-        float deltaX = event.getX(1) - event.getX(0), deltaY = event.getY(1) - event.getY(0);
-        float new2FingerDistance = (float) Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
-        if (old2FingersDistance == 0f) {
-            old2FingersDistance = new2FingerDistance;
+    private float getScaledDeltaXBetween2Events(MotionEvent event) {
+        float newScaledX = event.getX(1) - event.getX(0);
+        if (oldScaledX == 0f) {
+            oldScaledX = newScaledX;
             return 0f;
         } else {
-            float deltaDistance = new2FingerDistance - old2FingersDistance;
-            old2FingersDistance = new2FingerDistance;
-            return deltaDistance;
+            float deltaScaledX = newScaledX - oldScaledX;
+            oldScaledX = newScaledX;
+            return deltaScaledX;
+        }
+    }
+
+    private float getScaledDeltaYBetween2Events(MotionEvent event) {
+        float newScaledY = event.getY(1) - event.getY(0);
+        if (oldScaledY == 0f) {
+            oldScaledY = newScaledY;
+            return 0f;
+        } else {
+            float deltaScaledY = newScaledY - oldScaledY;
+            oldScaledY = newScaledY;
+            return deltaScaledY;
         }
     }
 
     public interface TwoFingersGestureListenter {
-        void down(float downX, float downY, long downTime);
+        void onDown(float downX, float downY, long downTime);
 
-        void moved(float deltaMovedX, float deltaMovedY, long deltaMilliseconds);
+        void onMoved(float deltaMovedX, float deltaMovedY, long deltaMilliseconds);
 
-        void rotated(float deltaRotatedDeg, long deltaMilliseconds);
+        void onRotated(float deltaRotatedDeg, long deltaMilliseconds);
 
-        void scaled(float deltaScaledDistance, long deltaMilliseconds);
+        void onScaled(float scaledDeltaX, float scaledDeltaY, float deltaScaledDistance, long deltaMilliseconds);
 
         // velocity: pixels/second   degrees/second
-        void up(float upX, float upY, long upTime, long lastDeltaMilliseconds, float xVelocity, float yVelocity, float rotatedVelocity, float scaledVelocity);
+        void onUp(float upX, float upY, long upTime, long lastDeltaMilliseconds, float xVelocity, float yVelocity, float rotatedVelocity, float scaledVelocity);
     }
 
     private TwoFingersGestureListenter twoFingersGestureListenter;

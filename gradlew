@@ -2,7 +2,7 @@
 
 ##############################################################################
 ##
-##  Gradle start up script for UN*X
+##  Gradle start onUp script for UN*X
 ##
 ##############################################################################
 
@@ -150,7 +150,7 @@ if $cygwin ; then
     esac
 fi
 
-# Split up the JVM_OPTS And GRADLE_OPTS values into an array, following the shell quoting and substitution rules
+# Split onUp the JVM_OPTS And GRADLE_OPTS values into an array, following the shell quoting and substitution rules
 function splitJvmOpts() {
     JVM_OPTS=("$@")
 }
