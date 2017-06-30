@@ -21,7 +21,7 @@ public class ThreeDViewController {
         this.threeDView.setDistanceVelocityDecrease(1.5f);
 
         twoFingersGestureDetector = new TwoFingersGestureDetector();
-        twoFingersGestureDetector.setTwoFingersGestureListenter(new TwoFingersGestureDetector.TwoFingersGestureListenter() {
+        twoFingersGestureDetector.setTwoFingersGestureListener(new TwoFingersGestureDetector.TwoFingersGestureListener() {
             @Override
             public void onDown(float downX, float downY, long downTime) {
                 ThreeDViewController.this.threeDView.stopAnim();

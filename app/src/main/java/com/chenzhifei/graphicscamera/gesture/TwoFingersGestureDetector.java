@@ -41,8 +41,8 @@ public class TwoFingersGestureDetector {
                 oldX = event.getX(0);
                 oldY = event.getY(0);
                 oldTimestamp = event.getDownTime();
-                if (twoFingersGestureListenter != null) {
-                    twoFingersGestureListenter.onDown(oldX, oldY, oldTimestamp);
+                if (twoFingersGestureListener != null) {
+                    twoFingersGestureListener.onDown(oldX, oldY, oldTimestamp);
                 }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -78,9 +78,9 @@ public class TwoFingersGestureDetector {
                     float deltaScaledY = getScaledDeltaYBetween2Events(event);
                     currDeltaScaledDistance = (float) Math.sqrt((deltaScaledX * deltaScaledX) + (deltaScaledY * deltaScaledY));
 
-                    if (this.twoFingersGestureListenter != null) {
-                        twoFingersGestureListenter.onScaled(deltaScaledX, deltaScaledY, currDeltaScaledDistance, currDeltaMilliseconds);
-                        twoFingersGestureListenter.onRotated(currDeltaRotatedDeg, currDeltaMilliseconds);
+                    if (this.twoFingersGestureListener != null) {
+                        twoFingersGestureListener.onScaled(deltaScaledX, deltaScaledY, currDeltaScaledDistance, currDeltaMilliseconds);
+                        twoFingersGestureListener.onRotated(currDeltaRotatedDeg, currDeltaMilliseconds);
                     }
 
                     // handle move
@@ -96,8 +96,8 @@ public class TwoFingersGestureDetector {
                 oldX = newX;
                 oldY = newY;
 
-                if (this.twoFingersGestureListenter != null) {
-                    twoFingersGestureListenter.onMoved(currDeltaMovedX, currDeltaMovedY, currDeltaMilliseconds);
+                if (this.twoFingersGestureListener != null) {
+                    twoFingersGestureListener.onMoved(currDeltaMovedX, currDeltaMovedY, currDeltaMilliseconds);
                 }
                 break;
             case MotionEvent.ACTION_POINTER_UP:
@@ -119,8 +119,8 @@ public class TwoFingersGestureDetector {
                     return true;
                 }
 
-                if (twoFingersGestureListenter != null) {
-                    twoFingersGestureListenter.onUp(
+                if (twoFingersGestureListener != null) {
+                    twoFingersGestureListener.onUp(
                             oldX, oldY, oldTimestamp, currDeltaMilliseconds,
                             currDeltaMilliseconds == 0f ? 0f : 1000 * currDeltaMovedX / currDeltaMilliseconds,
                             currDeltaMilliseconds == 0f ? 0f : 1000 * currDeltaMovedY / currDeltaMilliseconds,
@@ -173,7 +173,7 @@ public class TwoFingersGestureDetector {
         }
     }
 
-    public interface TwoFingersGestureListenter {
+    public interface TwoFingersGestureListener {
         void onDown(float downX, float downY, long downTime);
 
         void onMoved(float deltaMovedX, float deltaMovedY, long deltaMilliseconds);
@@ -186,9 +186,9 @@ public class TwoFingersGestureDetector {
         void onUp(float upX, float upY, long upTime, long lastDeltaMilliseconds, float xVelocity, float yVelocity, float rotatedVelocity, float scaledVelocity);
     }
 
-    private TwoFingersGestureListenter twoFingersGestureListenter;
+    private TwoFingersGestureListener twoFingersGestureListener;
 
-    public void setTwoFingersGestureListenter(TwoFingersGestureListenter l) {
-        this.twoFingersGestureListenter = l;
+    public void setTwoFingersGestureListener(TwoFingersGestureListener l) {
+        this.twoFingersGestureListener = l;
     }
 }
