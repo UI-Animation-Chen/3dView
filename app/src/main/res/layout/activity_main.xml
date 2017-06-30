@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.chenzhifei.graphicscamera.MainActivity">
+
+    <TextView
+        android:id="@+id/tv_x"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:text="distanceX: "/>
+    <TextView
+        android:id="@+id/tv_x_value"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/tv_x"
+        android:text="-"/>
+    <TextView
+        android:id="@+id/tv_y"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_below="@+id/tv_x"
+        android:text="distanceY: "/>
+    <TextView
+        android:id="@+id/tv_y_value"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/tv_y"
+        android:layout_below="@+id/tv_x_value"
+        android:text="-"/>
+    <TextView
+        android:id="@+id/tv_rotate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_below="@+id/tv_y"
+        android:text="rotateDeg: "/>
+    <TextView
+        android:id="@+id/tv_rotate_value"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/tv_rotate"
+        android:layout_below="@+id/tv_y_value"
+        android:text="-"/>
+    <TextView
+        android:id="@+id/tv_cameraZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_below="@+id/tv_rotate"
+        android:text="cameraZ: "/>
+    <TextView
+        android:id="@+id/tv_cameraZ_value"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/tv_cameraZ"
+        android:layout_below="@+id/tv_rotate_value"
+        android:text="-"/>
+
+    <com.chenzhifei.graphicscamera.view.ThreeDView
+        android:id="@+id/three_d_view"
+        android:layout_width="350dp"
+        android:layout_height="400dp"
+        android:layout_centerInParent="true"
+        android:background="#5777"/>
+
+</RelativeLayout>
