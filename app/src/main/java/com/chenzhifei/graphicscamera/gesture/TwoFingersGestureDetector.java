@@ -152,7 +152,7 @@ public class TwoFingersGestureDetector {
     }
 
     private float getDeltaScaledXBetween2Events(MotionEvent event) {
-        float newScaledX = event.getX(1) - event.getX(0);
+        float newScaledX = Math.abs(event.getX(1) - event.getX(0));
         if (oldScaledX == 0f) {
             oldScaledX = newScaledX;
             return 0f;
@@ -164,7 +164,7 @@ public class TwoFingersGestureDetector {
     }
 
     private float getDeltaScaledYBetween2Events(MotionEvent event) {
-        float newScaledY = event.getY(1) - event.getY(0);
+        float newScaledY = Math.abs(event.getY(1) - event.getY(0));
         if (oldScaledY == 0f) {
             oldScaledY = newScaledY;
             return 0f;
