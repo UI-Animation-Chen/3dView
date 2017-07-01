@@ -22,6 +22,7 @@ public class TwoFingersGestureDetector {
 
     private float oldScaledX = 0f;
     private float oldScaledY = 0f;
+    private float old2FingersDistance = 0f;
 
     private long oldTimestamp = 0, currDeltaMilliseconds = 0;
 
@@ -54,6 +55,7 @@ public class TwoFingersGestureDetector {
                 oldTanDeg = 0f;
                 oldScaledX = 0f;
                 oldScaledY = 0f;
+                old2FingersDistance = 0f;
 
                 oldX = (event.getX(0) + event.getX(1)) / 2f;
                 oldY = (event.getY(0) + event.getY(1)) / 2f;
@@ -74,9 +76,9 @@ public class TwoFingersGestureDetector {
                     // handle rotate
                     currDeltaRotatedDeg = getRotatedDegBetween2Events(event);
                     // handle scale
-                    float deltaScaledX = getScaledDeltaXBetween2Events(event);
-                    float deltaScaledY = getScaledDeltaYBetween2Events(event);
-                    currDeltaScaledDistance = (float) Math.sqrt((deltaScaledX * deltaScaledX) + (deltaScaledY * deltaScaledY));
+                    float deltaScaledX = getDeltaScaledXBetween2Events(event);
+                    float deltaScaledY = getDeltaScaledYBetween2Events(event);
+                    currDeltaScaledDistance = getScaledDistanceBetween2Events(event);
 
                     if (this.twoFingersGestureListener != null) {
                         twoFingersGestureListener.onScaled(deltaScaledX, deltaScaledY, currDeltaScaledDistance, currDeltaMilliseconds);
@@ -149,7 +151,7 @@ public class TwoFingersGestureDetector {
         }
     }
 
-    private float getScaledDeltaXBetween2Events(MotionEvent event) {
+    private float getDeltaScaledXBetween2Events(MotionEvent event) {
         float newScaledX = event.getX(1) - event.getX(0);
         if (oldScaledX == 0f) {
             oldScaledX = newScaledX;
@@ -161,7 +163,7 @@ public class TwoFingersGestureDetector {
         }
     }
 
-    private float getScaledDeltaYBetween2Events(MotionEvent event) {
+    private float getDeltaScaledYBetween2Events(MotionEvent event) {
         float newScaledY = event.getY(1) - event.getY(0);
         if (oldScaledY == 0f) {
             oldScaledY = newScaledY;
@@ -173,6 +175,19 @@ public class TwoFingersGestureDetector {
         }
     }
 
+    private float getScaledDistanceBetween2Events(MotionEvent event) {
+        float newScaledX = event.getX(1) - event.getX(0), newScaledY = event.getY(1) - event.getY(0);
+        float new2FingerDistance = (float) Math.sqrt((newScaledX * newScaledX) + (newScaledY * newScaledY));
+        if (old2FingersDistance == 0f) {
+            old2FingersDistance = new2FingerDistance;
+            return 0f;
+        } else {
+            float deltaDistance = new2FingerDistance - old2FingersDistance;
+            old2FingersDistance = new2FingerDistance;
+            return deltaDistance;
+        }
+    }
+
     public interface TwoFingersGestureListener {
         void onDown(float downX, float downY, long downTime);
 
@@ -180,7 +195,7 @@ public class TwoFingersGestureDetector {
 
         void onRotated(float deltaRotatedDeg, long deltaMilliseconds);
 
-        void onScaled(float scaledDeltaX, float scaledDeltaY, float deltaScaledDistance, long deltaMilliseconds);
+        void onScaled(float deltaScaledX, float deltaScaledY, float deltaScaledDistance, long deltaMilliseconds);
 
         // velocity: pixels/second   degrees/second
         void onUp(float upX, float upY, long upTime, long lastDeltaMilliseconds, float xVelocity, float yVelocity, float rotatedVelocity, float scaledVelocity);
