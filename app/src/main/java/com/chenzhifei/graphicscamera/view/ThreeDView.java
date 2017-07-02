@@ -31,12 +31,12 @@ public class ThreeDView extends View {
 
     private Camera camera = new Camera(); //default location: (0f, 0f, -8.0f), in pixels: -8.0f * 72 = -576f
 
-    private Matrix matrix = new Matrix();
-    private Matrix matrix2 = new Matrix();
-    private Matrix matrix3 = new Matrix();
-    private Matrix matrix4 = new Matrix();
-    private Matrix matrix5 = new Matrix();
-    private Matrix matrix6 = new Matrix();
+    private Matrix matrixFront = new Matrix();
+    private Matrix matrixBack = new Matrix();
+    private Matrix matrixLeft = new Matrix();
+    private Matrix matrixRight = new Matrix();
+    private Matrix matrixTop = new Matrix();
+    private Matrix matrixBottom = new Matrix();
     private Paint paint = new Paint();
     private Bitmap bitmap;
 
@@ -186,12 +186,12 @@ public class ThreeDView extends View {
         float yDeg = distanceX * distanceToDegree;
 
 //        setMatrix_test(xDeg, yDeg);
-        setMatrix(xDeg, yDeg);
-        setMatrix2(xDeg, yDeg);
-        setMatrix3(xDeg, yDeg);
-        setMatrix4(xDeg, yDeg);
-        setMatrix5(xDeg, yDeg);
-        setMatrix6(xDeg, yDeg);
+        setMatrixFront(xDeg, yDeg);
+        setMatrixBack(xDeg, yDeg);
+        setMatrixLeft(xDeg, yDeg);
+        setMatrixRight(xDeg, yDeg);
+        setMatrixTop(xDeg, yDeg);
+        setMatrixBottom(xDeg, yDeg);
 
         // translate canvas to locate the bitmap in center of the ThreeDViwe
         canvas.translate((THREE_D_VIEW_WIDTH - BIT_MAP_WIDTH) / 2f, (THREE_D_VIEW_HEIGHT - BIT_MAP_HEIGHT) / 2f);
@@ -201,119 +201,119 @@ public class ThreeDView extends View {
     }
 
     private void setMatrix_test(float xDeg, float yDeg) {
-        matrix.reset();
+        matrixFront.reset();
 
         camera.save();
         camera.rotateX(xDeg);
         camera.rotateY(yDeg);
         camera.rotateZ(-rotateDeg);
         camera.translate(0f, 0f, -cameraZtranslate);
-        camera.getMatrix(matrix);
+        camera.getMatrix(matrixFront);
         camera.restore();
 
-        matrix.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
-        matrix.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
+        matrixFront.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
+        matrixFront.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
     }
 
     private void drawCanvas_test(Canvas canvas, float xDeg, float yDeg) {
         if (Math.cos(Math.toRadians(xDeg)) <= 0 || Math.cos(Math.toRadians(yDeg)) <= 0) {
-            canvas.drawBitmap(bitmap, matrix, paint);
+            canvas.drawBitmap(bitmap, matrixFront, paint);
             drawCenter(canvas);
         }  else {
             drawCenter(canvas);
-            canvas.drawBitmap(bitmap, matrix, paint);
+            canvas.drawBitmap(bitmap, matrixFront, paint);
         }
     }
 
-    private void setMatrix(float xDeg, float yDeg) {
-        matrix.reset();
+    private void setMatrixFront(float xDeg, float yDeg) {
+        matrixFront.reset();
 
         camera.save(); // save the original state(no any transformation) so you can restore it after any changes
         camera.rotateX(xDeg); // it will lead to rotate Y and Z axis
         camera.rotateY(yDeg); // it will just lead to rotate Z axis, NOT X axis. BUT rotateZ(deg) will lead to nothing
         camera.rotateZ(-rotateDeg);
         camera.translate(0f, 0f, -cameraZtranslate);
-        camera.getMatrix(matrix);
+        camera.getMatrix(matrixFront);
         camera.restore(); // restore to the original state after uses for next use
 
         // translate coordinate origin the camera's transformation depends on to center of the bitmap
-        matrix.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
-        matrix.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
+        matrixFront.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
+        matrixFront.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
     }
 
-    private void setMatrix2(float xDeg, float yDeg) {
-        matrix2.reset();
+    private void setMatrixBack(float xDeg, float yDeg) {
+        matrixBack.reset();
 
         camera.save();
         camera.rotateX(xDeg);
         camera.rotateY(yDeg);
         camera.rotateZ(-rotateDeg);
         camera.translate(0f, 0f, cameraZtranslate);
-        camera.getMatrix(matrix2);
+        camera.getMatrix(matrixBack);
         camera.restore();
 
-        matrix2.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
-        matrix2.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
+        matrixBack.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
+        matrixBack.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
     }
 
-    private void setMatrix3(float xDeg, float yDeg) {
-        matrix3.reset();
+    private void setMatrixLeft(float xDeg, float yDeg) {
+        matrixLeft.reset();
 
         camera.save();
         camera.rotateX(xDeg);
         camera.rotateY(yDeg - 90f);
         camera.rotateZ(-rotateDeg);
         camera.translate(0f, 0f, -cameraZtranslate);
-        camera.getMatrix(matrix3);
+        camera.getMatrix(matrixLeft);
         camera.restore();
 
-        matrix3.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
-        matrix3.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
+        matrixLeft.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
+        matrixLeft.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
     }
 
-    private void setMatrix4(float xDeg, float yDeg) {
-        matrix4.reset();
+    private void setMatrixRight(float xDeg, float yDeg) {
+        matrixRight.reset();
 
         camera.save();
         camera.rotateX(xDeg);
         camera.rotateY(yDeg - 90f);
         camera.rotateZ(-rotateDeg);
         camera.translate(0f, 0f, cameraZtranslate);
-        camera.getMatrix(matrix4);
+        camera.getMatrix(matrixRight);
         camera.restore();
 
-        matrix4.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
-        matrix4.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
+        matrixRight.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
+        matrixRight.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
     }
 
-    private void setMatrix5(float xDeg, float yDeg) {
-        matrix5.reset();
+    private void setMatrixTop(float xDeg, float yDeg) {
+        matrixTop.reset();
 
         camera.save();
         camera.rotateX(xDeg - 90f);
         camera.rotateY(yDeg);
         camera.rotateZ(-rotateDeg);
         camera.translate(0f, 0f, -cameraZtranslate);
-        camera.getMatrix(matrix5);
+        camera.getMatrix(matrixTop);
         camera.restore();
 
-        matrix5.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
-        matrix5.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
+        matrixTop.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
+        matrixTop.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
     }
 
-    private void setMatrix6(float xDeg, float yDeg) {
-        matrix6.reset();
+    private void setMatrixBottom(float xDeg, float yDeg) {
+        matrixBottom.reset();
 
         camera.save();
         camera.rotateX(xDeg - 90f);
         camera.rotateY(yDeg);
         camera.rotateZ(-rotateDeg);
         camera.translate(0f, 0f, cameraZtranslate);
-        camera.getMatrix(matrix6);
+        camera.getMatrix(matrixBottom);
         camera.restore();
 
-        matrix6.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
-        matrix6.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
+        matrixBottom.preTranslate(-(BIT_MAP_WIDTH / 2), -(BIT_MAP_HEIGHT / 2));
+        matrixBottom.postTranslate(BIT_MAP_WIDTH / 2, BIT_MAP_HEIGHT / 2);
     }
 
     private void drawCenter(Canvas canvas) {
@@ -328,61 +328,61 @@ public class ThreeDView extends View {
 
     private void drawCanvas(Canvas canvas, float xDeg, float yDeg) {
         if (Math.cos(Math.toRadians(xDeg)) <= 0 || Math.cos(Math.toRadians(yDeg)) <= 0) {
-            canvas.drawBitmap(bitmap, matrix, paint);
+            canvas.drawBitmap(bitmap, matrixFront, paint);
             if (Math.cos(Math.toRadians(xDeg)) <= 0 || Math.cos(Math.toRadians(yDeg - 90f)) <= 0) {
-                canvas.drawBitmap(bitmap, matrix3, paint);
+                canvas.drawBitmap(bitmap, matrixLeft, paint);
                 if (Math.cos(Math.toRadians(xDeg - 90f)) <= 0 || Math.cos(Math.toRadians(yDeg)) <= 0) {
-                    canvas.drawBitmap(bitmap, matrix5, paint);
+                    canvas.drawBitmap(bitmap, matrixTop, paint);
                     drawCenter(canvas);
-                    canvas.drawBitmap(bitmap, matrix6, paint);
+                    canvas.drawBitmap(bitmap, matrixBottom, paint);
                 } else {
-                    canvas.drawBitmap(bitmap, matrix6, paint);
+                    canvas.drawBitmap(bitmap, matrixBottom, paint);
                     drawCenter(canvas);
-                    canvas.drawBitmap(bitmap, matrix5, paint);
+                    canvas.drawBitmap(bitmap, matrixTop, paint);
                 }
-                canvas.drawBitmap(bitmap, matrix4, paint);
+                canvas.drawBitmap(bitmap, matrixRight, paint);
             } else {
-                canvas.drawBitmap(bitmap, matrix4, paint);
+                canvas.drawBitmap(bitmap, matrixRight, paint);
                 if (Math.cos(Math.toRadians(xDeg - 90f)) <= 0 || Math.cos(Math.toRadians(yDeg)) <= 0) {
-                    canvas.drawBitmap(bitmap, matrix5, paint);
+                    canvas.drawBitmap(bitmap, matrixTop, paint);
                     drawCenter(canvas);
-                    canvas.drawBitmap(bitmap, matrix6, paint);
+                    canvas.drawBitmap(bitmap, matrixBottom, paint);
                 } else {
-                    canvas.drawBitmap(bitmap, matrix6, paint);
+                    canvas.drawBitmap(bitmap, matrixBottom, paint);
                     drawCenter(canvas);
-                    canvas.drawBitmap(bitmap, matrix5, paint);
+                    canvas.drawBitmap(bitmap, matrixTop, paint);
                 }
-                canvas.drawBitmap(bitmap, matrix3, paint);
+                canvas.drawBitmap(bitmap, matrixLeft, paint);
             }
-            canvas.drawBitmap(bitmap, matrix2, paint);
+            canvas.drawBitmap(bitmap, matrixBack, paint);
         }  else {
-            canvas.drawBitmap(bitmap, matrix2, paint);
+            canvas.drawBitmap(bitmap, matrixBack, paint);
             if (Math.cos(Math.toRadians(xDeg)) <= 0 || Math.cos(Math.toRadians(yDeg - 90f)) <= 0) {
-                canvas.drawBitmap(bitmap, matrix3, paint);
+                canvas.drawBitmap(bitmap, matrixLeft, paint);
                 if (Math.cos(Math.toRadians(xDeg - 90f)) <= 0 || Math.cos(Math.toRadians(yDeg)) <= 0) {
-                    canvas.drawBitmap(bitmap, matrix5, paint);
+                    canvas.drawBitmap(bitmap, matrixTop, paint);
                     drawCenter(canvas);
-                    canvas.drawBitmap(bitmap, matrix6, paint);
+                    canvas.drawBitmap(bitmap, matrixBottom, paint);
                 } else {
-                    canvas.drawBitmap(bitmap, matrix6, paint);
+                    canvas.drawBitmap(bitmap, matrixBottom, paint);
                     drawCenter(canvas);
-                    canvas.drawBitmap(bitmap, matrix5, paint);
+                    canvas.drawBitmap(bitmap, matrixTop, paint);
                 }
-                canvas.drawBitmap(bitmap, matrix4, paint);
+                canvas.drawBitmap(bitmap, matrixRight, paint);
             } else {
-                canvas.drawBitmap(bitmap, matrix4, paint);
+                canvas.drawBitmap(bitmap, matrixRight, paint);
                 if (Math.cos(Math.toRadians(xDeg - 90f)) <= 0 || Math.cos(Math.toRadians(yDeg)) <= 0) {
-                    canvas.drawBitmap(bitmap, matrix5, paint);
+                    canvas.drawBitmap(bitmap, matrixTop, paint);
                     drawCenter(canvas);
-                    canvas.drawBitmap(bitmap, matrix6, paint);
+                    canvas.drawBitmap(bitmap, matrixBottom, paint);
                 } else {
-                    canvas.drawBitmap(bitmap, matrix6, paint);
+                    canvas.drawBitmap(bitmap, matrixBottom, paint);
                     drawCenter(canvas);
-                    canvas.drawBitmap(bitmap, matrix5, paint);
+                    canvas.drawBitmap(bitmap, matrixTop, paint);
                 }
-                canvas.drawBitmap(bitmap, matrix3, paint);
+                canvas.drawBitmap(bitmap, matrixLeft, paint);
             }
-            canvas.drawBitmap(bitmap, matrix, paint);
+            canvas.drawBitmap(bitmap, matrixFront, paint);
         }
     }
 
