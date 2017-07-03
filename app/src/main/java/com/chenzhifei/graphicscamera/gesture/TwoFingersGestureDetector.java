@@ -14,7 +14,7 @@ public class TwoFingersGestureDetector {
     private float oldX = 0f;
     private float oldY = 0f;
 
-    // 如果在连续两次MOVE事件中，转动的角度超过180度，这次转动将被忽略。但这几乎是不可能的。
+    // 如果在连续两次MOVE事件中，转动的角度超过180度，这次转动效果或完全被忽略或小于实际角度。但这几乎是不可能的。
     private static final float MAX_DEGREES_IN_TWO_MOVE_EVENTS = 180f;
     private static final float REFERENCE_DEGREES = 360f - MAX_DEGREES_IN_TWO_MOVE_EVENTS;
     private static final float RADIAN_TO_DEGREE = (float) (180.0 / Math.PI);
