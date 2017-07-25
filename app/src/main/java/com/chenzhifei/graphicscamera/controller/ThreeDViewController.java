@@ -43,10 +43,9 @@ public class ThreeDViewController {
             }
 
             @Override
-            public void onUp(float upX, float upY, long upTime, long lastDeltaMilliseconds,
-                             float xVelocity, float yVelocity, float rotateDegVelocity, float scaledVelocity) {
+            public void onUp(float upX, float upY, long upTime, float xVelocity, float yVelocity) {
 
-                ThreeDViewController.this.threeDView.startAnim(lastDeltaMilliseconds, xVelocity, yVelocity, rotateDegVelocity);
+                ThreeDViewController.this.threeDView.startAnim(xVelocity, yVelocity);
             }
 
             @Override

@@ -40,8 +40,8 @@ public class ThreeDView extends View {
     private Paint paint = new Paint();
     private Bitmap bitmap;
 
-    private float distanceX = 0;
-    private float distanceY = 0;
+    private float distanceX = 0f;
+    private float distanceY = 0f;
     private float rotateDeg = 0f;
     private float cameraZtranslate; // 3D rotate radius
 
@@ -53,8 +53,6 @@ public class ThreeDView extends View {
 
     private float xVelocity = 0f;
     private float yVelocity = 0f;
-    private float rotateDegVelocity = 0f;
-    private long lastDeltaMilliseconds = 0;
 
     private Handler animHandler;
     private Handler touchHandler;
@@ -76,9 +74,8 @@ public class ThreeDView extends View {
         animHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                distanceX += (xVelocity * lastDeltaMilliseconds / 1000);
-                distanceY += (yVelocity * lastDeltaMilliseconds / 1000);
-                rotateDeg += (rotateDegVelocity * lastDeltaMilliseconds / 1000);
+                distanceX += (xVelocity * 0.016);
+                distanceY += (yVelocity * 0.016);
 
                 ThreeDView.this.invalidate();
 
@@ -86,7 +83,7 @@ public class ThreeDView extends View {
                     ThreeDView.this.stateValueListener.stateValue(distanceX, -distanceY, rotateDeg, cameraZtranslate);
                 }
 
-                if (xVelocity == 0f && yVelocity == 0f && rotateDegVelocity == 0f) { // anim will stop
+                if (xVelocity == 0f && yVelocity == 0f) { // anim will stop
                     return true;
                 }
 
@@ -101,11 +98,6 @@ public class ThreeDView extends View {
 
                     yVelocity = Math.abs(yVelocity) <= distanceVelocityDecrease ? 0f :
                             (yVelocity > 0 ? yVelocity - distanceVelocityDecrease : yVelocity + distanceVelocityDecrease);
-
-                    float degVelocityDecrease = distanceVelocityDecrease * distanceToDegree;
-                    rotateDegVelocity = Math.abs(rotateDegVelocity) <= degVelocityDecrease ? 0f :
-                            (rotateDegVelocity > 0 ? rotateDegVelocity - degVelocityDecrease :
-                                    rotateDegVelocity + degVelocityDecrease);
 
                     ThreeDView.this.sendMsgForAnim();
                 }
@@ -162,11 +154,9 @@ public class ThreeDView extends View {
         animHandler.removeCallbacksAndMessages(null);
     }
 
-    public void startAnim(long lastDeltaMilliseconds, float xVelocity, float yVelocity, float rotatedVelocity) {
-        this.lastDeltaMilliseconds = lastDeltaMilliseconds;
+    public void startAnim(float xVelocity, float yVelocity) {
         this.xVelocity = xVelocity;
         this.yVelocity = yVelocity;
-        this.rotateDegVelocity = rotatedVelocity;
 
         sendMsgForAnim();
     }

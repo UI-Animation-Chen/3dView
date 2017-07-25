@@ -1,6 +1,7 @@
 package com.chenzhifei.graphicscamera.gesture;
 
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 
 /**
  * Created by chenzhifei on 2017/6/30.
@@ -24,9 +25,9 @@ public class TwoFingersGestureDetector {
     private float oldScaledY = 0f;
     private float old2FingersDistance = 0f;
 
-    private long oldTimestamp = 0, currDeltaMilliseconds = 0;
+    private long oldTimestamp = 0;
 
-    private float currDeltaRotatedDeg, currDeltaScaledDistance, currDeltaMovedX, currDeltaMovedY;
+    private VelocityTracker vt = VelocityTracker.obtain();
 
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getPointerCount() > 2) {
@@ -35,13 +36,9 @@ public class TwoFingersGestureDetector {
                 twoFingersGestureListener.onCancel();
             }
         }
+        vt.addMovement(event);
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                // 如果不清理上一次双指产生的旋转和距离的增量，本次单指触摸up时还可以获得上次的速度值。
-                // 这里选择清理。
-                currDeltaRotatedDeg = 0f;
-                currDeltaScaledDistance = 0f;
-
                 oldX = event.getX(0);
                 oldY = event.getY(0);
                 oldTimestamp = event.getDownTime();
@@ -70,18 +67,18 @@ public class TwoFingersGestureDetector {
                 }
 
                 long newTimestamp = event.getEventTime();
-                currDeltaMilliseconds = newTimestamp - oldTimestamp;
+                long currDeltaMilliseconds = newTimestamp - oldTimestamp;
                 oldTimestamp = newTimestamp;
 
                 float newX, newY;
                 // handle 2 fingers touch
                 if (event.getPointerCount() == 2) {
                     // handle rotate
-                    currDeltaRotatedDeg = getRotatedDegBetween2Events(event);
+                    float currDeltaRotatedDeg = getRotatedDegBetween2Events(event);
                     // handle scale
                     float deltaScaledX = getDeltaScaledXBetween2Events(event);
                     float deltaScaledY = getDeltaScaledYBetween2Events(event);
-                    currDeltaScaledDistance = getScaledDistanceBetween2Events(event);
+                    float currDeltaScaledDistance = getScaledDistanceBetween2Events(event);
 
                     if (this.twoFingersGestureListener != null) {
                         twoFingersGestureListener.onScaled(deltaScaledX, deltaScaledY, currDeltaScaledDistance, currDeltaMilliseconds);
@@ -96,8 +93,8 @@ public class TwoFingersGestureDetector {
                     newY = event.getY(0);
                 }
 
-                currDeltaMovedX = newX - oldX;
-                currDeltaMovedY = newY - oldY;
+                float currDeltaMovedX = newX - oldX;
+                float currDeltaMovedY = newY - oldY;
                 oldX = newX;
                 oldY = newY;
 
@@ -124,13 +121,13 @@ public class TwoFingersGestureDetector {
                     return true;
                 }
 
+                vt.computeCurrentVelocity(1000);
+                float yVelocity = vt.getYVelocity();
+                float xVelocity = vt.getXVelocity();
+                vt.clear();
+
                 if (twoFingersGestureListener != null) {
-                    twoFingersGestureListener.onUp(
-                            oldX, oldY, oldTimestamp, currDeltaMilliseconds,
-                            currDeltaMilliseconds == 0f ? 0f : 1000 * currDeltaMovedX / currDeltaMilliseconds,
-                            currDeltaMilliseconds == 0f ? 0f : 1000 * currDeltaMovedY / currDeltaMilliseconds,
-                            currDeltaMilliseconds == 0f ? 0f : 1000 * currDeltaRotatedDeg / currDeltaMilliseconds,
-                            currDeltaMilliseconds == 0f ? 0f : 1000 * currDeltaScaledDistance / currDeltaMilliseconds);
+                    twoFingersGestureListener.onUp(oldX, oldY, oldTimestamp, xVelocity, yVelocity);
                 }
                 break;
         }
@@ -201,10 +198,10 @@ public class TwoFingersGestureDetector {
         void onScaled(float deltaScaledX, float deltaScaledY, float deltaScaledDistance, long deltaMilliseconds);
 
         // velocity: pixels/second   degrees/second
-        void onUp(float upX, float upY, long upTime, long lastDeltaMilliseconds, float xVelocity, float yVelocity, float rotatedVelocity, float scaledVelocity);
+        void onUp(float upX, float upY, long upTime, float xVelocity, float yVelocity);
 
         /**
-         * invoked when more than 2 fingers
+         * invoked when more than 2 findgers
          */
         void onCancel();
     }
