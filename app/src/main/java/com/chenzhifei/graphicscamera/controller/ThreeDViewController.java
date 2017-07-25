@@ -48,6 +48,9 @@ public class ThreeDViewController {
 
                 ThreeDViewController.this.threeDView.startAnim(lastDeltaMilliseconds, xVelocity, yVelocity, rotateDegVelocity);
             }
+
+            @Override
+            public void onCancel() {}
         });
     }
 

@@ -71,7 +71,7 @@
 
     <com.chenzhifei.graphicscamera.view.ThreeDView
         android:id="@+id/three_d_view"
-        android:layout_width="350dp"
+        android:layout_width="600dp"
         android:layout_height="400dp"
         android:layout_centerInParent="true"
         android:background="#5777"/>
