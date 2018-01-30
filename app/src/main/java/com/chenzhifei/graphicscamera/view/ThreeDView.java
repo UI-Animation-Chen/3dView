@@ -29,7 +29,24 @@ public class ThreeDView extends View {
     private static final float CENTER_CIRCLE_R = 60f;
     private static final float CENTER_CIRCLE_SHADOW_R = 200f;
 
-    private Camera camera = new Camera(); //default location: (0f, 0f, -8.0f), in pixels: -8.0f * 72 = -576f
+    /**
+     *              | y
+     *              |
+     *              |  / z
+     *              | /
+     *     ___-x____|/____x__________
+     *             /|(0,0)           |
+     *            / |                |
+     *    camera *  |                |
+     *          /   |     screen     |
+     *      -z /    |                |
+     *           -y |                |
+     *              |________________|
+     *
+     * camera model:
+     * default location: (0f, 0f, -8.0f), in pixels: -8.0f * 72 = -576f
+     */
+    private Camera camera = new Camera();
 
     private Matrix matrixFront = new Matrix();
     private Matrix matrixBack = new Matrix();
@@ -43,9 +60,9 @@ public class ThreeDView extends View {
     private float distanceX = 0f;
     private float distanceY = 0f;
     private float rotateDeg = 0f;
-    private float cameraZtranslate; // 3D rotate radius
+    private float distanceZ; // 3D rotate radius, obj's z coordinates.
 
-    private float distanceToDegree; // cameraZtranslate --> 90度
+    private float distanceToDeg; // distanceZ --> 90度
 
     private boolean isInfinity = false;
     private float distanceVelocityDecrease = 1f; //decrease 1 pixels/second when a message is handled in the loop
@@ -80,7 +97,7 @@ public class ThreeDView extends View {
                 ThreeDView.this.invalidate();
 
                 if (ThreeDView.this.stateValueListener != null) {
-                    ThreeDView.this.stateValueListener.stateValue(distanceX, -distanceY, rotateDeg, cameraZtranslate);
+                    ThreeDView.this.stateValueListener.stateValue(distanceX, -distanceY, rotateDeg, distanceZ);
                 }
 
                 if (xVelocity == 0f && yVelocity == 0f) { // anim will stop
@@ -110,7 +127,7 @@ public class ThreeDView extends View {
             @Override
             public boolean handleMessage(Message msg) {
                 if (ThreeDView.this.stateValueListener != null) {
-                    ThreeDView.this.stateValueListener.stateValue(distanceX, -distanceY, rotateDeg, cameraZtranslate);
+                    ThreeDView.this.stateValueListener.stateValue(distanceX, -distanceY, rotateDeg, distanceZ);
                 }
                 return true;
             }
@@ -141,7 +158,7 @@ public class ThreeDView extends View {
     }
 
     public void updateCameraZtranslate(float cameraZtranslate) {
-        this.cameraZtranslate += cameraZtranslate;
+        this.distanceZ += cameraZtranslate;
         invalidate();
         touchHandler.sendEmptyMessage(0);
     }
@@ -165,15 +182,15 @@ public class ThreeDView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         THREE_D_VIEW_WIDTH = w; //params value is in pixels not dp
         THREE_D_VIEW_HEIGHT = h;
-        cameraZtranslate = Math.min(w, h) / 2;
-        distanceToDegree = 90f / cameraZtranslate;//NOT changed when cameraZtranslate changed in the future
+        distanceZ = Math.min(w, h) / 2;
+        distanceToDeg = 90f / distanceZ;//NOT changed when distanceZ changed in the future
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         // convert distances in pixels into degrees
-        float xDeg = -distanceY * distanceToDegree;
-        float yDeg = distanceX * distanceToDegree;
+        float xDeg = -distanceY * distanceToDeg;
+        float yDeg = distanceX * distanceToDeg;
 
 //        setMatrix_test(xDeg, yDeg);
         setMatrixFront(xDeg, yDeg);
@@ -197,7 +214,7 @@ public class ThreeDView extends View {
         camera.rotateX(xDeg);
         camera.rotateY(yDeg);
         camera.rotateZ(-rotateDeg);
-        camera.translate(0f, 0f, -cameraZtranslate);
+        camera.translate(0f, 0f, -distanceZ);
         camera.getMatrix(matrixFront);
         camera.restore();
 
@@ -220,9 +237,9 @@ public class ThreeDView extends View {
 
         camera.save(); // save the original state(no any transformation) so you can restore it after any changes
         camera.rotateX(xDeg); // it will lead to rotate Y and Z axis
-        camera.rotateY(yDeg); // it will just lead to rotate Z axis, NOT X axis. BUT rotateZ(deg) will lead to nothing
-        camera.rotateZ(-rotateDeg);
-        camera.translate(0f, 0f, -cameraZtranslate);
+        camera.rotateY(yDeg); // it will just lead to rotate Z axis, NOT X axis.
+        camera.rotateZ(-rotateDeg); // BUT rotateZ(deg) will lead to nothing.
+        camera.translate(0f, 0f, -distanceZ);
         camera.getMatrix(matrixFront);
         camera.restore(); // restore to the original state after uses for next use
 
@@ -237,8 +254,8 @@ public class ThreeDView extends View {
         camera.save();
         camera.rotateX(xDeg);
         camera.rotateY(yDeg);
-        camera.rotateZ(-rotateDeg);
-        camera.translate(0f, 0f, cameraZtranslate);
+        camera.rotateZ(rotateDeg);
+        camera.translate(0f, 0f, distanceZ);
         camera.getMatrix(matrixBack);
         camera.restore();
 
@@ -253,7 +270,7 @@ public class ThreeDView extends View {
         camera.rotateX(xDeg);
         camera.rotateY(yDeg - 90f);
         camera.rotateZ(-rotateDeg);
-        camera.translate(0f, 0f, -cameraZtranslate);
+        camera.translate(0f, 0f, -distanceZ);
         camera.getMatrix(matrixLeft);
         camera.restore();
 
@@ -267,8 +284,8 @@ public class ThreeDView extends View {
         camera.save();
         camera.rotateX(xDeg);
         camera.rotateY(yDeg - 90f);
-        camera.rotateZ(-rotateDeg);
-        camera.translate(0f, 0f, cameraZtranslate);
+        camera.rotateZ(rotateDeg);
+        camera.translate(0f, 0f, distanceZ);
         camera.getMatrix(matrixRight);
         camera.restore();
 
@@ -283,7 +300,7 @@ public class ThreeDView extends View {
         camera.rotateX(xDeg - 90f);
         camera.rotateY(yDeg);
         camera.rotateZ(-rotateDeg);
-        camera.translate(0f, 0f, -cameraZtranslate);
+        camera.translate(0f, 0f, -distanceZ);
         camera.getMatrix(matrixTop);
         camera.restore();
 
@@ -297,8 +314,8 @@ public class ThreeDView extends View {
         camera.save();
         camera.rotateX(xDeg - 90f);
         camera.rotateY(yDeg);
-        camera.rotateZ(-rotateDeg);
-        camera.translate(0f, 0f, cameraZtranslate);
+        camera.rotateZ(rotateDeg);
+        camera.translate(0f, 0f, distanceZ);
         camera.getMatrix(matrixBottom);
         camera.restore();
 
