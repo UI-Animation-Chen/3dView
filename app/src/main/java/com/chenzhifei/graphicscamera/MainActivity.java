@@ -30,13 +30,13 @@ public class MainActivity extends AppCompatActivity {
         ThreeDView threeDView = (ThreeDView)findViewById(R.id.three_d_view);
         threeDView.setStateValueListener(new ThreeDView.StateValueListener() {
             @Override
-            public void stateValue(float distanceX, float distanceY, float rotateDeg, float cameraZtranslate) {
+            public void stateValue(float distanceX, float distanceY, float rotateDeg, float distanceZ) {
                 String xvalue = "" + distanceX, yvalue = "" + distanceY, rotateDegStr = "" + rotateDeg,
-                        cameraZtranslateStr = "" + cameraZtranslate;
+                        distanceZStr = "" + distanceZ;
                 xValue.setText(xvalue);
                 yValue.setText(yvalue);
                 rotateValue.setText(rotateDegStr);
-                cameraZvalue.setText(cameraZtranslateStr);
+                cameraZvalue.setText(distanceZStr);
             }
         });
 

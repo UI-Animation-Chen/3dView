@@ -21,7 +21,8 @@ public class ThreeDViewController {
         this.threeDView.setDistanceVelocityDecrease(1.5f);
 
         twoFingersGestureDetector = new TwoFingersGestureDetector();
-        twoFingersGestureDetector.setTwoFingersGestureListener(new TwoFingersGestureDetector.TwoFingersGestureListener() {
+        twoFingersGestureDetector.setTwoFingersGestureListener(
+                new TwoFingersGestureDetector.TwoFingersGestureListener() {
             @Override
             public void onDown(float downX, float downY, long downTime) {
                 ThreeDViewController.this.threeDView.stopAnim();
@@ -38,13 +39,13 @@ public class ThreeDViewController {
             }
 
             @Override
-            public void onScaled(float deltaScaledX, float deltaScaledY, float deltaScaledDistance, long deltaMilliseconds) {
-                ThreeDViewController.this.threeDView.updateCameraZtranslate(deltaScaledDistance);
+            public void onScaled(float deltaScaledX, float deltaScaledY,
+                                 float deltaScaledDistance, long deltaMilliseconds) {
+                ThreeDViewController.this.threeDView.updateDistanceZ(deltaScaledDistance);
             }
 
             @Override
             public void onUp(float upX, float upY, long upTime, float xVelocity, float yVelocity) {
-
                 ThreeDViewController.this.threeDView.startAnim(xVelocity, yVelocity);
             }
 

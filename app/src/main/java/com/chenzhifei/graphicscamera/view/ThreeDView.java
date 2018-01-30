@@ -57,16 +57,16 @@ public class ThreeDView extends View {
     private Paint paint = new Paint();
     private Bitmap bitmap;
 
-    private float distanceX = 0f;
-    private float distanceY = 0f;
-    private float rotateDeg = 0f;
-    private float distanceZ; // 3D rotate radius, obj's z coordinates.
+    private float distanceX = 0f; // y axis rotation.
+    private float distanceY = 0f; // x axis rotation.
+    private float rotateDeg = 0f; // z axis rotation.
+    private float distanceZ; // obj's z axis coordinates, 3D rotation radius.
 
-    private float distanceToDeg; // distanceZ --> 90度
+    private float distanceToDeg; // distanceZ --> 90deg
 
     private boolean isInfinity = false;
-    private float distanceVelocityDecrease = 1f; //decrease 1 pixels/second when a message is handled in the loop
-                    //loop frequency is 60hz or 120hz when handleMessage(msg) includes UI update code
+    private float distanceVelocityDecrease = 1f;// decrease 1 pixels/second when a message is handled in the loop.
+                // loop frequency is 60hz or 120hz when handleMessage(msg) includes UI update code.
 
     private float xVelocity = 0f;
     private float yVelocity = 0f;
@@ -157,8 +157,8 @@ public class ThreeDView extends View {
         touchHandler.sendEmptyMessage(0);
     }
 
-    public void updateCameraZtranslate(float cameraZtranslate) {
-        this.distanceZ += cameraZtranslate;
+    public void updateDistanceZ(float distanceZ) {
+        this.distanceZ += distanceZ;
         invalidate();
         touchHandler.sendEmptyMessage(0);
     }
@@ -201,7 +201,8 @@ public class ThreeDView extends View {
         setMatrixBottom(xDeg, yDeg);
 
         // translate canvas to locate the bitmap in center of the ThreeDViwe
-        canvas.translate((THREE_D_VIEW_WIDTH - BIT_MAP_WIDTH) / 2f, (THREE_D_VIEW_HEIGHT - BIT_MAP_HEIGHT) / 2f);
+        canvas.translate((THREE_D_VIEW_WIDTH - BIT_MAP_WIDTH) / 2f,
+                         (THREE_D_VIEW_HEIGHT - BIT_MAP_HEIGHT) / 2f);
 
         drawCanvas(canvas, xDeg, yDeg);
 //        drawCanvas_test(canvas, xDeg, yDeg);
@@ -402,7 +403,7 @@ public class ThreeDView extends View {
     }
 
     public interface StateValueListener {
-        void stateValue(float distanceX, float distanceY, float rotateDegree, float cameraZtranslate);
+        void stateValue(float distanceX, float distanceY, float rotateDegree, float distanceZ);
     }
 
     private StateValueListener stateValueListener;
